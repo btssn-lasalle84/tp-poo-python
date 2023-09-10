@@ -410,6 +410,11 @@ test_script3.py .                                                               
 =================================================================================================== 1 passed in 0.00s ====================================================================================================
 ```
 
+Voir aussi pour [Jupyter](https://jupyter.org/) :
+
+- [nbgrader](https://nbgrader.readthedocs.io/en/stable/index.html)
+- [Teaching Courses with GitHub and Jupyter Notebooks](https://sites.duke.edu/ilearninglab/files/2020/12/Teaching-Courses-with-GitHub-and-Jupyter-Notebooks.pdf)
+
 ## Bac à sable et développement en ligne
 
 Il est souvent nécessaire de passer par un "bac à sable".
