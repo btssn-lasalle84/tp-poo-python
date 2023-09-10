@@ -18,7 +18,7 @@
 
 **Les objectifs de ce TP sont de s’initier à la programmation Python en transférant ses connaissances de la programmation orientée objet.**
 
-> Pour les enseignants, ceci est un "petit" devoir pour [Github Classroom](https://btssn-lasalle84.github.io/guides-developpement-logiciel/guide-classroom.html). Il montre l'utilisation des tests unitaires en Python, la notation automatique et l'insertion d'un badge pour l'affichage de la note.
+> Pour les enseignants, ceci est un "petit" devoir pour [Github Classroom](https://btssn-lasalle84.github.io/guides-developpement-logiciel/guide-classroom.html). Il montre l'utilisation des [tests unitaires](#tests-unitaires) en Python, la notation automatique et l'insertion d'un badge pour l'affichage de la note.
 
 ## Le langage Python
 
@@ -270,20 +270,145 @@ _Bonus :_ Afficher l’aide (_docstring_) sur la méthode `affiche()`.
 
 ## Tests unitaires
 
-Installation :
+Installation de `pytest` :
 
 ```sh
 $ sudo apt -y install python3-pip
 $ sudo -H pip3 install pytest
 ```
 
-Lancement des tests :
+Lancement des tests pour le TP :
 
 ```sh
 $ pytest article1_test.py
 $ pytest article2_test.py
 $ pytest article3_test.py
+```
+
+Exemples :
+
+- tester un script `script1.py` (avec _stdin/stdout_)
+
+```python
+# Ce script demande à l’utilisateur de saisir un nombre et le stocke dans la variable a puis affiche le résultat de a*3.
+
+a = int(input())
+# print(type(a)) # <class 'int'>
+print(a*3)
+```
+
+Le programme de test `test_script1.py` :
+
+```python
+import pytest;
+import runpy;
+from io import StringIO
+
+def test_script1(monkeypatch,capfd):
+    # simule une saisie
+    monkeypatch.setattr('sys.stdin', StringIO('3\n'))
+    # voir aussi : simule input()
+    #monkeypatch.setattr('builtins.input', lambda _: "3")
+    # exécute le script à tester
+    runpy.run_path("script1.py")
+    # vérifie la sortie produite
+    out, err = capfd.readouterr()
+    assert out == "9\n"
+```
+
+Test :
+
 ```sh
+$ pytest test_script1.py
+================================================================================================== test session starts ===================================================================================================
+platform linux -- Python 3.10.12, pytest-7.2.1, pluggy-1.0.0
+rootdir: /mnt/sda/home/tv/Documents/git/tp-poo-python
+collected 1 item
+
+test_script1.py .                                                                                                                                                                                                  [100%]
+
+=================================================================================================== 1 passed in 0.01s ====================================================================================================
+```
+
+- tester une fonction dans `script2.py` :
+
+```python
+# Ce script définit une fonction qui reçoit en argument une température en degrés Celsius et la retourne en degrés Fahrenheit.
+
+def convertirCelsiusVersFahrenheit(C):
+    """reçoit en argument une température en degrés Celsius et la retourne en degrés Fahrenheit.
+    """
+    return C * 9/5 + 32
+```
+
+Le programme de test `test_script2.py` :
+
+```python
+import script2;
+import pytest;
+
+def test_script2():
+    F = script2.convertirCelsiusVersFahrenheit(22)
+    assert F == pytest.approx(71.6, 0.1)
+    F = script2.convertirCelsiusVersFahrenheit(0)
+    assert F == 32
+    F = script2.convertirCelsiusVersFahrenheit(-100)
+    assert F == -148
+```
+
+Test :
+
+```sh
+$ pytest test_script2.py
+================================================================================================== test session starts ===================================================================================================
+platform linux -- Python 3.10.12, pytest-7.2.1, pluggy-1.0.0
+rootdir: /mnt/sda/home/tv/Documents/git/tp-poo-python
+collected 1 item
+
+test_script2.py .                                                                                                                                                                                                  [100%]
+
+=================================================================================================== 1 passed in 0.00s ====================================================================================================
+```
+
+- tester une classe dans `script3.py` :
+
+```python
+class Vehicule:
+    """La classe Vehicule"""
+
+    def __init__(self, modele="", couleur=""):
+        self.modele = modele
+        self.couleur = couleur
+
+    def affiche(self):
+        print("modele = " + self.modele)
+        print("couleur = " + self.couleur)
+```
+
+Le programme de test `test_script3.py` :
+
+```python
+import script3;
+
+def test_script3(capfd):
+    vehicule = script3.Vehicule("peugeot", "blanche")
+    assert vehicule.couleur == "blanche"
+    assert vehicule.modele == "peugeot"
+```
+
+Test :
+
+```sh
+$ pytest test_script3.py
+================================================================================================== test session starts ===================================================================================================
+platform linux -- Python 3.10.12, pytest-7.2.1, pluggy-1.0.0
+rootdir: /mnt/sda/home/tv/Documents/git/tp-poo-python
+collected 1 item
+
+test_script3.py .                                                                                                                                                                                                  [100%]
+
+=================================================================================================== 1 passed in 0.00s ====================================================================================================
+```
 
 ## Bac à sable et développement en ligne
 
@@ -295,10 +420,7 @@ Il existe de nombreux sites web qui fournissent des EDI (Environnement de Dével
 
 Quelques sites :
 
-- JSFiddle : https://jsfiddle.net/ pour HTML, CSS et JavaScript
-- Codeply : https://www.codeply.com/ pour les frameworks JavaScript
 - Coding Ground For Developers : https://www.tutorialspoint.com/codingground.htm pour tout !
-    - PHP : https://www.tutorialspoint.com/execute_php_online.php
     - **Python : https://www.tutorialspoint.com/execute_python3_online.php**
     - Markdown : https://www.tutorialspoint.com/online_markdown_editor.php
 - Visual Studio Code Online : https://vscode.dev/
